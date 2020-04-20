@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:personalexpenses/widgets/chart.dart';
 import 'package:personalexpenses/widgets/new_transaction.dart';
 import './widgets/transaction_list.dart';
 import 'models/transaction.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 
 void main() => runApp(MyApp());
@@ -11,7 +13,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter App',
+      title:'Personal Expenses',
+      theme: ThemeData(
+        primarySwatch: Colors.purple,
+        accentColor: Colors.amber,
+        textTheme: ThemeData.light().textTheme.copyWith(title: GoogleFonts.openSans(fontSize: 18,fontWeight: FontWeight.bold),),
+        appBarTheme: AppBarTheme(
+            textTheme: ThemeData.light().textTheme.copyWith(title: GoogleFonts.openSans(fontSize: 20,fontWeight: FontWeight.bold),
+            ))
+      ),
       home: MyHomePage(),
     );
   }
@@ -26,21 +36,27 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   final List<Transaction> _userTransaction = [
-    Transaction(
-      id: 't1',
-      title: 'New Shoes',
-      price: 200,
-      date: DateTime.now(),
-    ),
-    Transaction(
-      id: 't2',
-      title: 'New Shirt',
-      price: 300,
-      date: DateTime.now(),
-    ),
+//    Transaction(
+//      id: 't1',
+//      title: 'New Shoes',
+//      price: 200,
+//      date: DateTime.now(),
+//    ),
+//    Transaction(
+//      id: 't2',
+//      title: 'New Shirt',
+//      price: 300,
+//      date: DateTime.now(),
+//    ),
   ];
 
-  void _addNewTransaction(String txTitle, int txAmount) {
+  List<Transaction> get _recentTransactions{
+    return _userTransaction.where((tx){
+      return tx.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
+    }).toList();
+  }
+
+  void _addNewTransaction(String txTitle, double txAmount) {
     final newTx = Transaction(
       title: txTitle,
       price: txAmount,
@@ -65,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Flutter App'),
+        title: Text('Personal Expenses',style: GoogleFonts.openSans(),),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.add),
@@ -77,10 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Card(
-              color: Colors.blue,
-              child: Text('1st Card'),
-            ),
+            Chart(_recentTransactions),
             TransactionList(_userTransaction),
           ],
         ),

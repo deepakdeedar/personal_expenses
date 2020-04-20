@@ -4,7 +4,7 @@ class Transaction{
 
   final String id;
   final String title;
-  final int price;
+  final double price;
   final DateTime date;
 
   Transaction(
